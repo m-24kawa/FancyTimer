@@ -1,5 +1,22 @@
 'use strict';
 {
+  function clearStr(tgtStr,ix,iy){
+    // 文字列削除処理（一括）
+    const canvas = document.querySelector('canvas');
+    if (typeof canvas.getContext === 'undefined') {
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+    ctx.moveTo(ix-2,iy);
+    ctx.lineTo(ix+(tgtStr.length)*45, iy);
+    ctx.lineTo(ix+(tgtStr.length)*45-7, iy+75);
+    ctx.lineTo(ix-9, iy+75);
+    ctx.lineTo.closePath;
+    ctx.fillStyle = '#aaa';
+    ctx.fill();
+  }
   function putStr2(tgtStr,ix,iy) {
     const canvas = document.querySelector('canvas');
     if (typeof canvas.getContext === 'undefined') {
@@ -9,10 +26,10 @@
 
     // 文字列削除処理（一括）
     ctx.beginPath();
-    ctx.moveTo(ix,iy);
+    ctx.moveTo(ix-2,iy);
     ctx.lineTo(ix+(tgtStr.length)*45, iy);
     ctx.lineTo(ix+(tgtStr.length)*45-7, iy+75);
-    ctx.lineTo(ix-7, iy+75);
+    ctx.lineTo(ix-9, iy+75);
     ctx.lineTo.closePath;
     ctx.fillStyle = '#aaa';
     ctx.fill();
@@ -92,9 +109,9 @@
     var BitChk = [0x00, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
     var SegOffsetX = [null, 5, 4, 36, 2, 1, 33, -1];
     var SegOffsetY = [null, 5, 6, 6, 37, 38, 38, 69];
-    for(let i=0; i<8; i++){
-      console.log(' Segment',bitInfo,i,(bitInfo & BitChk[i])!=0 );
-    }
+    // for(let i=0; i<8; i++){
+    //   console.log(' Segment',bitInfo,i,(bitInfo & BitChk[i])!=0 );
+    // }
     //セグメント１作成
     if (bitInfo & BitChk[1]){
       ctx.beginPath();
@@ -188,33 +205,123 @@
       ctx.fillStyle = '#000000';
       ctx.fill();
     }
+  }
 
+  function sleep(ms){
+    return new Promise(resolve=>setTimeout(resolve,ms));
   }
-  const buttonElement = document.querySelector('button');
-  let timerId;
-  let updateFlg = 1;
-  var curTime;
   
-  function showSeconds(){
-    setInterval(()=>{
-      const d = new Date();
-      const msec = d.getMilliseconds();
-      const csec = String(Math.floor(msec/10)).padStart(2,'0');
-      const hour = String(d.getHours()).padStart(2,'0');
-      const min = String(d.getMinutes()).padStart(2,'0');
-      const sec = String(d.getSeconds()).padStart(2,'0');
-      if(updateFlg>0){
-        curTime = hour + ':' + min + ':' + sec + '.' +csec;
-      }
-      putStr2(curTime,25,50);
-    },10);
+  // msec→hh:mm:ss.cc 変換して表示
+  function putTime( currTime ){
+    const t_hmsc = currTime % (24 * 3600 * 1000);
+    const hour = String(Math.floor(t_hmsc / (3600 * 1000 ))).padStart(2,'0');
+    const t_msc = t_hmsc % (3600 * 1000);
+    const min = String(Math.floor(t_msc / (60 * 1000 ))).padStart(2,'0');
+    const t_sc = t_msc % (60 * 1000);
+    const sec = String(Math.floor(t_sc / 1000 )).padStart(2,'0');
+    const t_c = t_sc % 1000;
+    const csec = String(Math.floor(t_c/10)).padStart(2,'0');
+    strTime = hour + ':' + min + ':' + sec + '.' +csec;
+    putStr2(strTime,25,50);
   }
-   buttonElement.addEventListener('click',() => {
-     if(updateFlg===0){
-       updateFlg = 1;
-     }else{
-       updateFlg = 0;
-     };
-   });
-  showSeconds();
+
+  // ボタン要素取得(表示)
+  const buttonElement_start = document.getElementById('btn_start');
+  const buttonElement_reset = document.getElementById('btn_reset');
+  //  ボタン要素取得(非表示)
+  const buttonElement_stop = document.getElementById('btn_stop');
+  buttonElement_stop.style.display = 'none';
+  const buttonElement_lap = document.getElementById('btn_lap');
+  buttonElement_lap.style.display = 'none';
+  const buttonElement_exit = document.getElementById('btn_exit');
+  buttonElement_exit.style.display = 'none';
+  const buttonElement_save_exit = document.getElementById('btn_save_exit');
+  buttonElement_save_exit.style.display = 'none';
+  //const buttonElement = document.querySelector('button');
+  let tBase = 0; 
+  let tDiff = 0;
+  let prevDiff = 0; 
+  let tOffset = 0;
+  var strTime;
+  putTime(tOffset);
+
+  var timerId;
+  let Lap_flg = 0; // LAP可否フラグ
+  let Lap_on = 0; // LAP処理中(使用時は初期値1)
+
+  buttonElement_start.addEventListener('click',() => {
+    // console.log(' tOffset  :',tOffset);
+    // console.log(' tDiff    :',tDiff);
+    tBase = Date.now();//UTC time 
+    timerId=setInterval(()=>{
+      tDiff = Date.now() - tBase;
+      // ボタン表示切替
+      buttonElement_start.style.display = 'none';
+      buttonElement_reset.style.display = 'none';
+      buttonElement_stop.style.display = 'inline-block';
+      if (Lap_flg){
+          buttonElement_lap.style.display = 'inline-block';
+      }
+     
+      // STOPボタン押下処理
+      buttonElement_stop.addEventListener('click',()=>{
+        // 繰り返し処理終了
+        clearInterval(timerId);
+        // LAPは不可
+        Lap_flg =0;
+        // ボタン表示切替
+        buttonElement_stop.style.display = 'none';
+        buttonElement_lap.style.display = 'none';
+        buttonElement_start.style.display = 'inline-block';
+        buttonElement_reset.style.display = 'inline-block';
+        return;
+      });
+      // LAPボタン
+      buttonElement_lap.addEventListener('click',()=>{
+        // 繰り返し処理終了
+        clearInterval(timerId);
+        // ボタン表示切替
+        buttonElement_stop.style.display = 'none';
+        buttonElement_lap.style.display = 'none';
+        buttonElement_exit.style.display = 'inline-block';
+        buttonElement_save_exit.style.display = 'inline-block';
+        Lap_on = 1;
+        return;
+      });
+      // 表示更新
+      if (Lap_on){
+        putTime(tDiff - prevDiff);
+       }else{
+        putTime(tOffset + tDiff);
+      }
+    },10);
+
+    // 表示値切替
+    tOffset = tOffset + tDiff;
+    tDiff = 0;
+    Lap_on = 0;
+  });
+
+  buttonElement_exit.addEventListener('click',() => {
+    // ボタン表示切替
+    buttonElement_exit.style.display = 'none';
+    buttonElement_save_exit.style.display = 'none';
+    buttonElement_start.style.display = 'inline-block';
+    buttonElement_reset.style.display = 'inline-block';
+  });
+  buttonElement_save_exit.addEventListener('click',() => {
+    prevDiff = tDiff;
+    // ボタン表示切替
+    buttonElement_exit.style.display = 'none';
+    buttonElement_save_exit.style.display = 'none';
+    buttonElement_start.style.display = 'inline-block';
+    buttonElement_reset.style.display = 'inline-block';
+  });
+  buttonElement_reset.addEventListener('click',() => {
+    tOffset = 0;
+    tDiff = 0;
+    putTime(tOffset + tDiff);
+    //Lap_flg = 1; // LAP可能とする
+  });
 }
+

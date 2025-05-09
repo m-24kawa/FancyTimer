@@ -2,15 +2,28 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>My Timer</title>
+  <title>My Timer 3</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <canvas width="600" height = "200">
     Canvas not supported.
   </canvas>
-  <button>■START/STOP</button>
-
+  <div class = "container">
+    <panel_1>
+      <button id="btn_start">▶ START</button>
+      <button id="btn_reset">□ RESET</button>
+    </panel_1>
+    <panel_2>
+      <button id="btn_stop">● STOP</button>
+      <button id="btn_lap">□ LAP</button>
+    </panel_2>
+    <panel_3>
+      <button id="btn_exit">□ EXIT</button>
+      <button id="btn_save_exit">□ SAVE&EXIT</button>
+    </panel_3>
+  </div>
+  
   <script src="js/main.js"></script>
 </body>
 </html>
