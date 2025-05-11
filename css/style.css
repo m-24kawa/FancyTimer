@@ -2,7 +2,7 @@ body {
   background: #222;
 }
 canvas {
-  background: #aaa;
+  background: #222;
 }
 .container{
   display: flex;
@@ -10,8 +10,8 @@ canvas {
   justify-content: flex-start;
 }
 button{
-  width : 120px;
-  line-height: 30px;
-  font-size: 24;
+  width : 180px;
+  line-height: 50px;
+  font-size: 32px;
   font-weight: bold;
 }
