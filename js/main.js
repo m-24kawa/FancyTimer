@@ -1,11 +1,13 @@
 'use strict';
 {
-  const urlParams = new URLSearchParams(window.location.search);
-  let cvBackGround = urlParams.get('back');
-  let cvForeGround = urlParams.get('fore');
-  if (cvBackGround==null || cvForeGround==null){
-    cvBackGround = '#66c';  // 背景色
-    cvForeGround = '#ddd';  // 文字色
+  const url_string = window.location.href;
+  const url_obj = new URL(url_string);
+  const params = url_obj.searchParams;
+  let cvBackGround = '#' + params.get('back');
+  let cvForeGround = '#' + params.get('fore');
+  if (cvBackGround==='#null' || cvForeGround==='#null'){
+    cvBackGround = '#008';  // 背景色
+    cvForeGround = '#aaa';  // 文字色
   }
   function InitScreen(){
     // 画面背景初期化
@@ -129,6 +131,7 @@
   }
   
   function drawNum(ctx, bitInfo,ix,iy){
+    // 0～9描画、bitInfoとBitChkのビット積が0以外ならば多角形を描画
     var BitChk = [0x00, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
     var SegOffsetX = [null, 5, 4, 36, 2, 1, 33, -1];
     var SegOffsetY = [null, 5, 6, 6, 37, 38, 38, 69];
@@ -137,103 +140,66 @@
     // }
     //セグメント１作成
     if (bitInfo & BitChk[1]){
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[1],iy+SegOffsetY[1]);
-      ctx.lineTo(ix+SegOffsetX[1]+5,iy+SegOffsetY[1]-5);
-      ctx.lineTo(ix+SegOffsetX[1]+25,iy+SegOffsetY[1]-5);
-      ctx.lineTo(ix+SegOffsetX[1]+30,iy+SegOffsetY[1]);
-      ctx.lineTo(ix+SegOffsetX[1]+25,iy+SegOffsetY[1]+5);
-      ctx.lineTo(ix+SegOffsetX[1]+5,iy+SegOffsetY[1]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
+      drawHLine(ctx,ix+SegOffsetX[1],iy+SegOffsetY[1]);
     }
     //セグメント２作成
     if (bitInfo & BitChk[2]){
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[2],iy+SegOffsetY[2]);
-      ctx.lineTo(ix+SegOffsetX[2]+5,iy+SegOffsetY[2]+5);
-      ctx.lineTo(ix+SegOffsetX[2]+3,iy+SegOffsetY[2]+25);
-      ctx.lineTo(ix+SegOffsetX[2]-2,iy+SegOffsetY[2]+30);
-      ctx.lineTo(ix+SegOffsetX[2]-7,iy+SegOffsetY[2]+25);
-      ctx.lineTo(ix+SegOffsetX[2]-5,iy+SegOffsetY[2]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
-    } 
+      drawVLine(ctx,ix+SegOffsetX[2],iy+SegOffsetY[2]);
+    }
     //セグメント３作成
     if (bitInfo & BitChk[3]){
-      //console.log('BitSeg3 ');
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[3],iy+SegOffsetY[3]);
-      ctx.lineTo(ix+SegOffsetX[3]+5,iy+SegOffsetY[3]+5);
-      ctx.lineTo(ix+SegOffsetX[3]+3,iy+SegOffsetY[3]+25);
-      ctx.lineTo(ix+SegOffsetX[3]-2,iy+SegOffsetY[3]+30);
-      ctx.lineTo(ix+SegOffsetX[3]-7,iy+SegOffsetY[3]+25);
-      ctx.lineTo(ix+SegOffsetX[3]-5,iy+SegOffsetY[3]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
-    } 
+      drawVLine(ctx,ix+SegOffsetX[3],iy+SegOffsetY[3]);
+    }
     //セグメント４作成
     if (bitInfo & BitChk[4]){
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[4],iy+SegOffsetY[4]);
-      ctx.lineTo(ix+SegOffsetX[4]+5,iy+SegOffsetY[4]-5);
-      ctx.lineTo(ix+SegOffsetX[4]+25,iy+SegOffsetY[4]-5);
-      ctx.lineTo(ix+SegOffsetX[4]+30,iy+SegOffsetY[4]);
-      ctx.lineTo(ix+SegOffsetX[4]+25,iy+SegOffsetY[4]+5);
-      ctx.lineTo(ix+SegOffsetX[4]+5,iy+SegOffsetY[4]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
-    } 
+      drawHLine(ctx,ix+SegOffsetX[4],iy+SegOffsetY[4]);
+    }
     //セグメント５作成
     if (bitInfo & BitChk[5]){
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[5],iy+SegOffsetY[5]);
-      ctx.lineTo(ix+SegOffsetX[5]+5,iy+SegOffsetY[5]+5);
-      ctx.lineTo(ix+SegOffsetX[5]+3,iy+SegOffsetY[5]+25);
-      ctx.lineTo(ix+SegOffsetX[5]-2,iy+SegOffsetY[5]+30);
-      ctx.lineTo(ix+SegOffsetX[5]-7,iy+SegOffsetY[5]+25);
-      ctx.lineTo(ix+SegOffsetX[5]-5,iy+SegOffsetY[5]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
-    } 
+    drawVLine(ctx,ix+SegOffsetX[5],iy+SegOffsetY[5]);
+    }
     //セグメント６作成
     if (bitInfo & BitChk[6]){
-      //console.log('BitSeg6 ');
-      ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[6],iy+SegOffsetY[6]);
-      ctx.lineTo(ix+SegOffsetX[6]+5,iy+SegOffsetY[6]+5);
-      ctx.lineTo(ix+SegOffsetX[6]+3,iy+SegOffsetY[6]+25);
-      ctx.lineTo(ix+SegOffsetX[6]-2,iy+SegOffsetY[6]+30);
-      ctx.lineTo(ix+SegOffsetX[6]-7,iy+SegOffsetY[6]+25);
-      ctx.lineTo(ix+SegOffsetX[6]-5,iy+SegOffsetY[6]+5);
-      ctx.lineTo.closePath;
-      ctx.fillStyle = cvForeGround;
-      ctx.fill();
-    } 
+    drawVLine(ctx,ix+SegOffsetX[6],iy+SegOffsetY[6]);
+    }
+
     //セグメント７作成
     if (bitInfo & BitChk[7]){
+      drawHLine(ctx,ix+SegOffsetX[7],iy+SegOffsetY[7]);
+    }
+  }
+  // セグメントの描画
+  function drawHLine(ctx,ix,iy){
       ctx.beginPath();
-      ctx.moveTo(ix+SegOffsetX[7],iy+SegOffsetY[7]);
-      ctx.lineTo(ix+SegOffsetX[7]+5,iy+SegOffsetY[7]-5);
-      ctx.lineTo(ix+SegOffsetX[7]+25,iy+SegOffsetY[7]-5);
-      ctx.lineTo(ix+SegOffsetX[7]+30,iy+SegOffsetY[7]);
-      ctx.lineTo(ix+SegOffsetX[7]+25,iy+SegOffsetY[7]+5);
-      ctx.lineTo(ix+SegOffsetX[7]+5,iy+SegOffsetY[7]+5);
+      ctx.moveTo(ix,iy);
+      ctx.lineTo(ix+5,iy-5);
+      ctx.lineTo(ix+25,iy-5);
+      ctx.lineTo(ix+30,iy);
+      ctx.lineTo(ix+25,iy+5);
+      ctx.lineTo(ix+5,iy+5);
       ctx.lineTo.closePath;
       ctx.fillStyle = cvForeGround;
       ctx.fill();
-    }
+  }
+  function drawVLine(ctx,ix,iy){
+      ctx.beginPath();
+      ctx.moveTo(ix,iy);
+      ctx.lineTo(ix+5,iy+5);
+      ctx.lineTo(ix+3,iy+25);
+      ctx.lineTo(ix-2,iy+30);
+      ctx.lineTo(ix-7,iy+25);
+      ctx.lineTo(ix-5,iy+5);
+      ctx.lineTo.closePath;
+      ctx.fillStyle = cvForeGround;
+      ctx.fill();
   }
 
   function sleep(ms){
     return new Promise(resolve=>setTimeout(resolve,ms));
   }
-  
+
+  let Blink_flg = 0; // 点滅フラグ
+  let tDiff = 0;
   // msec→hh:mm:ss.cc 変換して表示
   function putTime( currTime ){
     const t_hmsc = currTime % (24 * 3600 * 1000);
@@ -244,33 +210,41 @@
     const sec = String(Math.floor(t_sc / 1000 )).padStart(2,'0');
     const t_c = t_sc % 1000;
     const csec = String(Math.floor(t_c/10)).padStart(2,'0');
-    var strTime = hour + ':' + min + ':' + sec + '.' +csec;
+
+    let tDiff_c = tDiff - 1000 * Math.floor(tDiff / 1000); //秒未満端数
+    if (Blink_flg===1 && tDiff_c >= 900 ) {
+         var strTime = hour + ' ' + min + ' ' + sec + '.' +csec;
+    } else {
+         var strTime = hour + ':' + min + ':' + sec + '.' +csec;
+    }
     putStr2(strTime,25,50);
   }
-
+  
   // ボタン要素取得(表示)
   const buttonElement_start = document.getElementById('btn_start');
   const buttonElement_reset = document.getElementById('btn_reset');      
   //  ボタン要素取得(非表示)
   const buttonElement_stop = document.getElementById('btn_stop');
   buttonElement_stop.style.display = 'none';
-  const buttonElement_lap = document.getElementById('btn_lap');
-  buttonElement_lap.style.display = 'none';
-  const buttonElement_lapstar = document.getElementById('btn_lapstar');
-  buttonElement_lapstar.style.display = 'none';
+  const buttonElement_mid = document.getElementById('btn_mid');
+  buttonElement_mid.style.display = 'none';
+  const buttonElement_split = document.getElementById('btn_split');
+  buttonElement_split.style.display = 'none';
   const buttonElement_cont = document.getElementById('btn_cont');
   buttonElement_cont.style.display = 'none';
   //const buttonElement = document.querySelector('button');
   let tBase = 0; 
-  let tDiff = 0;
   let tOffset = 0;    // 累積更新時間
-  let tPrevDiff = 0;  // LAP押下時のタイム
-  let tLapBase = 0;   // Lap基準タイム 
+  let tPrevDiff = 0;  // Mid押下時のタイム
+  let tLapBase = 0;   // Split基準タイム 
   InitScreen();
-  putTime(tOffset);
+
+  let tDisp = tOffset;
+  putTime(tDisp);
 
   var timerId;
   let Ud_flg =0; // タイマ表示・非表示
+ 
   //let Lap_flg = 1; // LAP可否フラグ
   let Lap_on = 0; // LAPモード設定(未設定:0、設定中:1)
   let Set_on = 0; // LAP基準タイム設定
@@ -279,6 +253,7 @@
     // console.log(' tOffset  :',tOffset);
     // console.log(' tDiff    :',tDiff);
     Ud_flg =1; // 表示ON
+    Blink_flg = 1; // 点滅フラグ
     tBase = Date.now();//UTC time
 
     timerId=setInterval(()=>{
@@ -288,16 +263,13 @@
         buttonElement_start.style.display = 'none';
         buttonElement_reset.style.display = 'none';
         buttonElement_stop.style.display = 'inline-block';
-        if (Set_on==1) {      
-            buttonElement_lapstar.style.display = 'inline-block';
-        } else {
-            buttonElement_lap.style.display = 'inline-block';
-        }
+        buttonElement_mid.style.display = 'inline-block';
       }
       // 表示更新
       if (Ud_flg==1){
-        putTime(tOffset + tDiff);
+        tDisp = tOffset + tDiff;
       }
+      putTime(tDisp);
     },10);
 
     // 表示値切替
@@ -309,57 +281,70 @@
   buttonElement_stop.addEventListener('click',()=>{
       // 繰り返し処理終了
       clearInterval(timerId);
+      Blink_flg = 0; // 点滅フラグOFF
       if (Lap_on ==1){
-        putTime(tOffset + tDiff);
+        tDisp = tOffset + tDiff;
+        putTime(tDisp);
       };
       Lap_on = 0; // LAPモード終了
       Set_on = 0; // LAP基準タイムを無効にする
       // ボタン表示切替
       buttonElement_stop.style.display = 'none';
-      buttonElement_lap.style.display = 'none';
-      buttonElement_lapstar.style.display = 'none';
+      buttonElement_mid.style.display = 'none';
+      buttonElement_split.style.display = 'none';
       buttonElement_cont.style.display = 'none';
       buttonElement_start.style.display = 'inline-block';
       buttonElement_reset.style.display = 'inline-block';
       return;
   });
-  // LAPボタン押下処理
-  buttonElement_lap.addEventListener('click',()=>{
+  // MIDボタン押下処理
+  buttonElement_mid.addEventListener('click',()=>{
     Ud_flg=0; // 表示更新なし
-    Lap_on = 1; // Lapモード
     // ボタン表示切替
-    buttonElement_lap.style.display = 'none';
-    buttonElement_cont.style.display = 'inline-block';
-    tPrevDiff = tOffset+tDiff;
-    putTime(tPrevDiff);
-    tLapBase = tPrevDiff;
-    Set_on = 1 // LAP基準タイム設定済
+    buttonElement_mid.style.display = 'none';
+    if (Set_on === 1) {
+      buttonElement_split.style.display = 'inline-block';
+    } 
+    buttonElement_cont.style.display = 'inline-block';  
+    if (Lap_on === 0) {
+      tLapBase=tPrevDiff;
+      tPrevDiff = tOffset+tDiff;
+    }
+    tDisp = tPrevDiff;
+    putTime(tDisp);
+    //tLapBase = tPrevDiff;
+    Lap_on = 1; // Lapモード
+    Set_on = 1; // LAP基準タイム設定済
     return;
   });
-  // LAP STARボタン押下処理
-  buttonElement_lapstar.addEventListener('click',()=>{
+  // SPLITボタン押下処理
+  buttonElement_split.addEventListener('click',()=>{
     Ud_flg=0; // 表示更新なし
-    Lap_on = 1; // Lapモード
+    //Lap_on = 1; // Lapモード
     // ボタン表示切替
-    buttonElement_lapstar.style.display = 'none';
-    buttonElement_cont.style.display = 'inline-block';
-    tPrevDiff = tOffset+tDiff;
-    putTime(tPrevDiff-tLapBase);
-    tLapBase = tPrevDiff;
+    buttonElement_mid.style.display = 'inline-block';
+    buttonElement_split.style.display = 'none';
+    //tPrevDiff = tOffset+tDiff;
+    tDisp = tPrevDiff-tLapBase;
+    putTime(tDisp);
+    //tLapBase = tPrevDiff;
     return;
   });
   // CONTボタン押下処理
   buttonElement_cont.addEventListener('click',()=>{
       Ud_flg = 1; // 表示更新　再開
+      Lap_on = 0; // LAPモード終了
       // ボタン表示切替
+      buttonElement_split.style.display = 'none';
       buttonElement_cont.style.display = 'none';
-      buttonElement_lapstar.style.display = 'inline-block';
+      buttonElement_mid.style.display = 'inline-block';
       return;
   });
   buttonElement_reset.addEventListener('click',() => {
     tOffset = 0;
     tDiff = 0;
-    putTime(tOffset + tDiff);
+    tDisp = tOffset + tDiff;
+    putTime(tDisp);
     //Lap_flg = 1; // LAP可能とする
   });
 }
