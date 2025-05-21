@@ -230,8 +230,10 @@
   buttonElement_mid.style.display = 'none';
   const buttonElement_split = document.getElementById('btn_split');
   buttonElement_split.style.display = 'none';
-  const buttonElement_cont = document.getElementById('btn_cont');
-  buttonElement_cont.style.display = 'none';
+  const buttonElement_timer = document.getElementById('btn_timer');
+  buttonElement_timer.style.display = 'none';
+  const buttonElement_mid_star = document.getElementById('btn_mid_star');
+  buttonElement_mid_star.style.display = 'none';
   //const buttonElement = document.querySelector('button');
   let tBase = 0; 
   let tOffset = 0;    // 累積更新時間
@@ -292,7 +294,8 @@
       buttonElement_stop.style.display = 'none';
       buttonElement_mid.style.display = 'none';
       buttonElement_split.style.display = 'none';
-      buttonElement_cont.style.display = 'none';
+      buttonElement_timer.style.display = 'none';
+      buttonElement_mid_star.style.display = 'none';
       buttonElement_start.style.display = 'inline-block';
       buttonElement_reset.style.display = 'inline-block';
       return;
@@ -305,7 +308,7 @@
     if (Set_on === 1) {
       buttonElement_split.style.display = 'inline-block';
     } 
-    buttonElement_cont.style.display = 'inline-block';  
+    buttonElement_timer.style.display = 'inline-block';  
     if (Lap_on === 0) {
       tLapBase=tPrevDiff;
       tPrevDiff = tOffset+tDiff;
@@ -322,21 +325,34 @@
     Ud_flg=0; // 表示更新なし
     //Lap_on = 1; // Lapモード
     // ボタン表示切替
-    buttonElement_mid.style.display = 'inline-block';
     buttonElement_split.style.display = 'none';
+    buttonElement_mid_star.style.display = 'inline-block';
     //tPrevDiff = tOffset+tDiff;
     tDisp = tPrevDiff-tLapBase;
     putTime(tDisp);
     //tLapBase = tPrevDiff;
     return;
   });
-  // CONTボタン押下処理
-  buttonElement_cont.addEventListener('click',()=>{
+  // MID* ボタン押下処理
+  buttonElement_mid_star.addEventListener('click',()=>{
+    Ud_flg=0; // 表示更新なし
+    // ボタン表示切替
+    buttonElement_mid_star.style.display = 'none';
+    if (Set_on === 1) {
+      buttonElement_split.style.display = 'inline-block';
+    } 
+    tDisp = tPrevDiff;
+    putTime(tDisp);
+    return;
+  });
+  // TIMERボタン押下処理
+  buttonElement_timer.addEventListener('click',()=>{
       Ud_flg = 1; // 表示更新　再開
       Lap_on = 0; // LAPモード終了
       // ボタン表示切替
       buttonElement_split.style.display = 'none';
-      buttonElement_cont.style.display = 'none';
+      buttonElement_timer.style.display = 'none';
+      buttonElement_mid_star.style.display = 'none';
       buttonElement_mid.style.display = 'inline-block';
       return;
   });
